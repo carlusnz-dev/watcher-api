@@ -58,7 +58,7 @@ def read_monitor_by_id(monitor_id):
   return jsonify({
     "message": "Monitor achado no banco de dados!",
     "monitor": monitor_formatted
-  })
+  }), 200
 
 
 # Create new monitor
@@ -73,7 +73,7 @@ def add_monitor():
       return jsonify({
         "message": "Erro ao salvar! Monitor já existente",
         "existing_id": found_monitor.id
-      })
+      }), 400
     
   if 'name' in data and 'url' in data:
     new_monitor = models.Monitor(
