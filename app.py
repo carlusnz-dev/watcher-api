@@ -12,6 +12,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
 # Routes
+
+# Read all monitors
 @app.route('/api/monitor/read_all', methods=['GET'])
 def read_all_monitors():
   monitors = models.Monitor.query.all()
@@ -40,10 +42,39 @@ def read_all_monitors():
       "message": "Erro ao salvar o monitor!",
       "error": full_traceback
     }), 400
+    
+@app.route('/api/monitor/read/<int:monitor_id>', methods=['GET'])
+def read_monitor_by_id(monitor_id):
+  monitor = models.Monitor.query.get_or_404(monitor_id)
+  monitor_formatted = {
+    "id": monitor.id,
+    "name": monitor.name,
+    "url": monitor.url,
+    "frequency": monitor.frequency,
+    "status": monitor.status,
+    "description": monitor.description
+  }
+  
+  return jsonify({
+    "message": "Monitor achado no banco de dados!",
+    "monitor": monitor_formatted
+  })
 
+
+# Create new monitor
 @app.route('/api/monitor/add', methods=['POST'])
 def add_monitor():
   data = request.json
+  
+  # Checking if there is monitor in the DB
+  if 'url' in data:
+    found_monitor = models.Monitor.query.filter_by(url=data['url']).first()
+    if found_monitor:
+      return jsonify({
+        "message": "Erro ao salvar! Monitor já existente",
+        "existing_id": found_monitor.id
+      })
+    
   if 'name' in data and 'url' in data:
     new_monitor = models.Monitor(
       name = data['name'],
@@ -62,6 +93,7 @@ def add_monitor():
   
   return jsonify({"message": "Dados do produto inválidos ou faltantes!"}), 400
 
+# Update monitor
 @app.route('/api/monitor/update/<int:monitor_id>', methods=['PUT'])
 def update_monitor(monitor_id):
   monitor = models.Monitor.query.get_or_404(monitor_id)
@@ -85,6 +117,7 @@ def update_monitor(monitor_id):
     "new_monitor": new_monitor
   }), 200
 
+# Detele monitor
 @app.route('/api/monitor/delete/<int:monitor_id>', methods=['DELETE'])
 def delete_monitor(monitor_id):
   monitor = models.Monitor.query.get_or_404(monitor_id)
