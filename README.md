@@ -59,9 +59,71 @@ Siga os passos para instalar e rodar o projeto.
 3.  **Instale as dependências:**
 
     ```bash
+    npm install
     pip install -r requirements.txt
     ```
 
 4.  **Rode o projeto**
+    ```bash
+    npm run dev
+    ```
+    - [**Front-End**](http://localhost:3000/) - localhost:3000
+    - [**Back-End**](http://127.0.0.1:5000/) - 127.0.0.1:5000
 
 ---
+
+# 📂 Estrutura do Projeto
+
+```bash
+watcher-api/
+├── server/            # API Flask
+│   ├── app/            # Código da aplicação (Models, Routes, Services)
+│   ├── instance/       # Banco de dados SQLite
+│   └── run.py          # Entry point do Flask
+├── watcher-frontend/   # Aplicação Next.js
+├── scripts/            # Scripts de automação cross-platform
+└── package.json        # Gerenciador de scripts global
+```
+
+---
+
+## 📡 Rotas da API
+
+Principais endpoints disponíveis no Backend:
+
+- **GET** /api/monitor/read_all - Lista todos os monitores.
+
+- **POST** /api/monitor/add - Cria um novo monitor.
+
+- **PUT** /api/monitor/update/(id) - Atualiza um monitor.
+
+- **DELETE** /api/monitor/delete/(id) - Remove um monitor e para seu agendamento.
+
+- **GET** /api/monitor/watcher/(id) - Comandos globais (start, stop, pause).
+
+---
+
+## 🤝 Contribuição
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir Issues ou enviar Pull Requests.
+
+1. Faça um Fork do projeto
+
+2. Crie uma Branch para sua Feature (git checkout -b feature/MinhaFeature)
+
+3. Faça o Commit de suas mudanças (git commit -m 'Adiciona MinhaFeature')
+
+4. Faça o Push para a Branch (git push origin feature/MinhaFeature)
+
+5. Abra um Pull Request
+
+## 📝 Licença
+
+Este projeto está sob a licença GNU - veja o arquivo [LICENSE](./LICENSE) para detalhes.
+
+---
+
+Criado por [**carlusnz-dev**](https://www.github.com/carlusnz-dev/), Carlos Antunes - 2025
+
+- **LinkedIn:** [https://www.linkedin.com/in/carlusnzdev/](https://www.linkedin.com/in/carlusnzdev/)
+- **Instagram:** [@carlusnzdev](https://www.instagram.com/carlusnzdev/)
