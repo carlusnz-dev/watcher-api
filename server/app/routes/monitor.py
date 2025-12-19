@@ -1,22 +1,15 @@
-import os, traceback, models, watcher
-from flask import Flask, request, jsonify
-from extensions import db
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.schedulers.base import STATE_RUNNING, STATE_PAUSED, STATE_STOPPED
+import traceback
+from flask import Blueprint, request, jsonify
+from apscheduler.schedulers.base import STATE_PAUSED, STATE_RUNNING, STATE_STOPPED
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-scheduler = BackgroundScheduler()
+from app import models
+from app.services import watcher
+from app.extensions import db, scheduler
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "watchs.db")}'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db.init_app(app)
-
-# Routes
+bp = Blueprint('monitor', __name__, url_prefix='/api/monitor')
 
 # Read all monitors
-@app.route('/api/monitor/read_all', methods=['GET'])
+@bp.route('/read_all', methods=['GET'])
 def read_all_monitors():
   monitors = models.Monitor.query.all()
   monitors_formatted = []
@@ -45,7 +38,7 @@ def read_all_monitors():
       "error": full_traceback
     }), 400
     
-@app.route('/api/monitor/read/<int:monitor_id>', methods=['GET'])
+@bp.route('/read/<int:monitor_id>', methods=['GET'])
 def read_monitor_by_id(monitor_id):
   monitor = models.Monitor.query.get_or_404(monitor_id)
   monitor_formatted = {
@@ -64,7 +57,7 @@ def read_monitor_by_id(monitor_id):
 
 
 # Create new monitor
-@app.route('/api/monitor/add', methods=['POST'])
+@bp.route('/add', methods=['POST'])
 def add_monitor():
   data = request.json
   
@@ -96,7 +89,7 @@ def add_monitor():
   return jsonify({"message": "Dados do produto inválidos ou faltantes!"}), 400
 
 # Update monitor
-@app.route('/api/monitor/update/<int:monitor_id>', methods=['PUT'])
+@bp.route('/update/<int:monitor_id>', methods=['PUT'])
 def update_monitor(monitor_id):
   monitor = models.Monitor.query.get_or_404(monitor_id)
   new_monitor = request.get_json()
@@ -120,13 +113,15 @@ def update_monitor(monitor_id):
   }), 200
 
 # Detele monitor
-@app.route('/api/monitor/delete/<int:monitor_id>', methods=['DELETE'])
+@bp.route('/delete/<int:monitor_id>', methods=['DELETE'])
 def delete_monitor(monitor_id):
   monitor = models.Monitor.query.get_or_404(monitor_id)
   
   try:
     job_id = str(monitor.id)
-    scheduler.remove_job(job_id)
+    job = scheduler.get_job(job_id)
+    if job is not None:
+      scheduler.remove_job(job_id)
   except Exception as e:
     print(f"Aviso: não foi possível remover o Job {job_id}. Ele pode não estar ativo. Erro {e}")
     
@@ -139,7 +134,7 @@ def delete_monitor(monitor_id):
   }), 200
   
 # Schedulers
-@app.route('/api/monitor/watcher/<command>', methods=['GET'])
+@bp.route('/watcher/<command>', methods=['GET'])
 def watch_all_monitors(command):
   if command == 'start':
     try:
@@ -178,7 +173,7 @@ def watch_all_monitors(command):
         "error": traceback.format_exc()
       })
   
-@app.route('/api/monitor/watcher/<int:monitor_id>', methods=['GET'])
+@bp.route('/watcher/<int:monitor_id>', methods=['GET'])
 def watch_monitor(monitor_id):
   monitor = models.Monitor.query.get_or_404(monitor_id)
   job_id = str(monitor.id)
@@ -207,10 +202,3 @@ def watch_monitor(monitor_id):
       "message": "Erro durante a execução do código!",
       "error": traceback.format_exc()
     })
-
-# Config
-if __name__ == "__main__":
-  with app.app_context():
-    db.create_all()
-  
-  app.run(debug=False)

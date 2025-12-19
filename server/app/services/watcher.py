@@ -1,10 +1,11 @@
-import requests, models
-from app import app
-from extensions import db
+import requests, app.models as models
+from app import create_app
+from app.extensions import db
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 def check_monitors():
   print("\nRodando verificação...")
+  app = create_app()
   with app.app_context():
     all_monitors = models.Monitor.query.all()
 
@@ -24,6 +25,7 @@ def check_monitors():
           print(f"Alterações feitas: {monitor.name}")
 
 def check_monitor_for_id(monitor_id):
+  app = create_app()
   with app.app_context():    
     monitor = models.Monitor.query.get(monitor_id)
     if not monitor:
@@ -42,12 +44,3 @@ def check_monitor_for_id(monitor_id):
         monitor.status = 0
         db.session.commit()
         print(f"Alterações feitas: status alterado para {monitor.status}")
-
-if __name__ == "__main__":
-  scheduler = BlockingScheduler()
-  scheduler.add_job(check_monitors, 'interval', seconds=10)
-  print("Robô rodando! Ctrl+C para cancelar.")
-  try:
-    scheduler.start()
-  except (KeyboardInterrupt, SystemExit):
-    pass
