@@ -1,0 +1,28 @@
+{
+  "name": "watcher-project-root",
+  "version": "1.0.0",
+  "description": "[![License: GNU](https://img.shields.io/badge/License-GNU-yellow.svg)](https://opensource.org/licenses-old/gpl-license-html) [![Python Version](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/) [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/carlusnz-dev/watcher-api/graphs/commit-activity)",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "npm run install:front",
+    "install:front": "npm install --prefix watcher-frontend",
+    "dev": "concurrently -n \"FRONT,BACK\" -c \"cyan.bold,yellow.bold\" \"npm run dev:front\" \"npm run dev:back\"",
+    "dev:front": "npm run dev --prefix watcher-frontend",
+    "dev:back": "node scripts/start-backend.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carlusnz-dev/watcher-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/carlusnz-dev/watcher-api/issues"
+  },
+  "homepage": "https://github.com/carlusnz-dev/watcher-api#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
