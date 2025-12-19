@@ -1,9 +1,11 @@
-import os, traceback
+import os, traceback, models, watcher
 from flask import Flask, request, jsonify
 from extensions import db
-import models
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.base import STATE_RUNNING, STATE_PAUSED, STATE_STOPPED
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+scheduler = BackgroundScheduler()
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "watchs.db")}'
@@ -79,7 +81,7 @@ def add_monitor():
     new_monitor = models.Monitor(
       name = data['name'],
       url = data['url'],
-      frequency = data.get('frequency', 5),
+      frequency = data.get('frequency', 5 * 60),
       status = data.get('status'),
       description = data.get('description', 'Has no description')
     )
@@ -121,6 +123,13 @@ def update_monitor(monitor_id):
 @app.route('/api/monitor/delete/<int:monitor_id>', methods=['DELETE'])
 def delete_monitor(monitor_id):
   monitor = models.Monitor.query.get_or_404(monitor_id)
+  
+  try:
+    job_id = str(monitor.id)
+    scheduler.remove_job(job_id)
+  except Exception as e:
+    print(f"Aviso: não foi possível remover o Job {job_id}. Ele pode não estar ativo. Erro {e}")
+    
   db.session.delete(monitor)
   db.session.commit()
   
@@ -128,6 +137,76 @@ def delete_monitor(monitor_id):
     "message": "Monitor deletado com sucesso!",
     "monitor_id": monitor.id
   }), 200
+  
+# Schedulers
+@app.route('/api/monitor/watcher/<command>', methods=['GET'])
+def watch_all_monitors(command):
+  if command == 'start':
+    try:
+      if scheduler.state == STATE_RUNNING:
+        return jsonify({
+          "message": "Scheduler já está rodando!"
+        }), 400
+      
+      if scheduler.state == STATE_STOPPED:
+        scheduler.start()
+        return jsonify({
+          "message": "Scheduler foi iniciado!"
+        }), 200
+        
+      if scheduler.state == STATE_PAUSED:
+        scheduler.resume()
+        return jsonify({
+          "message": "Retornando as atividades do Scheduler!",
+        }), 200
+              
+    except Exception:
+      return jsonify({
+        "message": f"Erro ao executar o comando <{command}>!",
+        "error": traceback.format_exc()
+      })
+      
+  if command == 'stop':
+    try:
+      scheduler.pause()
+      return jsonify({
+        "message": "Scheduler pausado com sucesso!"
+      }), 200
+    except Exception:
+      return jsonify({
+        "message": "Erro ao parar o scheduler!",
+        "error": traceback.format_exc()
+      })
+  
+@app.route('/api/monitor/watcher/<int:monitor_id>', methods=['GET'])
+def watch_monitor(monitor_id):
+  monitor = models.Monitor.query.get_or_404(monitor_id)
+  job_id = str(monitor.id)
+  
+  try:
+    if scheduler.state == STATE_STOPPED:
+      scheduler.start()
+    elif scheduler.state == STATE_PAUSED:
+      scheduler.resume()
+      
+    scheduler.add_job(
+      func=watcher.check_monitor_for_id,
+      trigger='interval',
+      seconds=monitor.frequency,
+      args=[monitor.id],
+      id=job_id,
+      replace_existing=True
+    )
+    
+    return jsonify({
+      "message": f"Watcher do {monitor.name} iniciado!",
+      "monitor_id": monitor.id
+    }), 200
+  except Exception as e:
+    return jsonify({
+      "message": "Erro durante a execução do código!",
+      "error": traceback.format_exc()
+    })
 
 # Config
 if __name__ == "__main__":
