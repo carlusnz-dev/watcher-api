@@ -8,15 +8,6 @@ Uma aplicação web completa para monitoramento de suas API's locais em seu ambi
 
 ---
 
-## 📌 Sumário
-
-- [Sobre](#sobre)
-- [Tecnologias](#tecnologias)
-- [Pré-requisitos](#pré-requisitos)
-- [Instalação](#instalação)
-- [Contribuição](#contribuição)
-- [Licença](#licença)
-
 ## 📖 Sobre
 
 O Watcher API resolve o problema do monitoramento manual de API's que estão rodando localmente em seu ambiente. Ele utiliza do **requests** do Python para obter o status e log, posteriormente, salvando em um banco de dados e retornando no front-end.
