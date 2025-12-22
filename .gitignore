@@ -42,3 +42,8 @@ __pycache__/
 # typescript
 **/*.tsbuildinfo
 **/next-env.d.ts
+
+.vscode/*
+**/.vscode/
+**/.angular/
+.angular/*
