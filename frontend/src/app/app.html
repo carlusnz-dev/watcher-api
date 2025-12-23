@@ -1,9 +1,11 @@
-<main class="main">
-  <div class="h-full grid lg:grid-cols-[350px_1fr]">
-    <div>
-      <app-sidebar></app-sidebar>
+<main class="main h-screen max-h-screen p-6">
+  <div class="h-full flex gap-x-3 sm:gap-x-8">
+    <div
+      class="sticky top-0 hidden md:block w-full max-w-87.5 bg-neutral-100 rounded-2xl shadow-2xl"
+    >
+      <app-sidebar-component></app-sidebar-component>
     </div>
-    <div>
+    <div class="h-full w-full bg-neutral-100 rounded-2xl shadow-2xl">
       <router-outlet></router-outlet>
     </div>
   </div>

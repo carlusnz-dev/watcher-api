@@ -1,0 +1,27 @@
+<div class="h-full p-8 flex flex-col bg-neutral-100 rounded-2xl">
+  <a routerLink="/" class="text-3xl md:text-4xl hover:opacity-50 transition-all">
+    Watcher
+    <span class="font-bold">API</span>
+  </a>
+
+  <ul>
+    @for (link of navLinks; track link.id) {
+    <li class="nav-item">
+      <a
+        routerLink="{{ link.path }}"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: link.path === '/' }"
+        #rla="routerLinkActive"
+        class="nav-link"
+      >
+        @if (rla.isActive) {
+        <ng-icon name="{{ link.icon + 'Solid' }}" />
+        } @else {
+        <ng-icon name="{{ link.icon }}" />
+        }
+        {{ link.name }}
+      </a>
+    </li>
+    }
+  </ul>
+</div>

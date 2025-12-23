@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MonitorAll } from './monitor-all';
+import { HomeComponent } from './home-component';
 
-describe('MonitorAll', () => {
-  let component: MonitorAll;
-  let fixture: ComponentFixture<MonitorAll>;
+describe('HomeComponent', () => {
+  let component: HomeComponent;
+  let fixture: ComponentFixture<HomeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MonitorAll]
+      imports: [HomeComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MonitorAll);
+    fixture = TestBed.createComponent(HomeComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
