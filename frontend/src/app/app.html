@@ -1,11 +1,10 @@
 <main class="main h-screen max-h-screen p-6">
   <div class="h-full flex gap-x-3 sm:gap-x-8">
-    <div
-      class="sticky top-0 hidden md:block w-full max-w-87.5 bg-neutral-100 rounded-2xl shadow-2xl"
-    >
+    <div class="sticky top-0 hidden md:block w-full max-w-87.5 bg-neutral-100 rounded-2xl shadow">
       <app-sidebar-component></app-sidebar-component>
     </div>
-    <div class="h-full w-full bg-neutral-100 rounded-2xl shadow-2xl">
+    <div class="h-full w-full flex flex-col">
+      <app-header-component class="h-full max-h-16"></app-header-component>
       <router-outlet></router-outlet>
     </div>
   </div>

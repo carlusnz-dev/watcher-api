@@ -5,6 +5,7 @@
   </a>
 
   <ul class="mt-6 sm:mt-12 md:mt-16">
+    <p class="text-sm font-bold text-neutral-400 uppercase mb-5">menu</p>
     @for (link of navLinks; track link.id) {
     <li class="nav-item">
       <a
@@ -15,7 +16,7 @@
         class="nav-link"
       >
         @if (rla.isActive) {
-        <ng-icon name="{{ link.icon + 'Solid' }}" />
+        <ng-icon name="{{ link.icon + 'Solid' }}" color="#175fbd" />
         } @else {
         <ng-icon name="{{ link.icon }}" />
         }
