@@ -1,9 +1,11 @@
 import os
 from flask import Flask
 from app.extensions import db, scheduler
+from flask_cors import CORS
 
 def create_app():
   app = Flask(__name__)
+  CORS(app)
   
   basedir = os.path.abspath(os.path.dirname(__file__))
   database_path = os.path.join(basedir, '..', 'instance', 'watchs.db')

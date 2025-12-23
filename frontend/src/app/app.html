@@ -1,3 +1,10 @@
 <main class="main">
-  <h1 class="text-6xl font-bold">Teste</h1>
+  <div class="h-full grid lg:grid-cols-[350px_1fr]">
+    <div>
+      <app-sidebar></app-sidebar>
+    </div>
+    <div>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
 </main>

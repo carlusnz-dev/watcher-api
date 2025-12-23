@@ -21,7 +21,8 @@ def read_all_monitors():
         "url": monitor.url,
         "frequency": monitor.frequency,
         "status": monitor.status,
-        "description": monitor.description
+        "description": monitor.description,
+        "id": monitor.id
       }
       monitors_formatted.append(new_monitor)
     
