@@ -17,7 +17,7 @@ export class MonitorService {
   private http = inject(HttpClient);
   private baseUrl = 'http://127.0.0.1:5000/api/monitor';
 
-  async getAllMonitors() {
+  async getAllMonitors(): Promise<Monitor[]> {
     const response = await firstValueFrom(this.http.get<any>(this.baseUrl + '/read_all'));
     const monitors = response.monitors;
     return monitors;
