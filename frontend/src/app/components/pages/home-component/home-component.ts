@@ -1,11 +1,11 @@
 import { Component, computed, inject, resource } from '@angular/core';
 import { MonitorService } from '../../../services/monitor-service';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { ButtonComponent } from '../../button-component/button-component';
 
 @Component({
   selector: 'app-home-component',
-  imports: [RouterLink, ButtonComponent],
+  imports: [ButtonComponent],
   templateUrl: './home-component.html',
   styleUrl: './home-component.css',
 })
@@ -23,11 +23,17 @@ export class HomeComponent {
     loader: () => this.monitors,
   });
 
-  totalCount = computed(() => this.dataMonitor.value()?.length ?? 0);
-
   activeMonitor = computed(() => {
     const all = this.dataMonitor.value();
     if (!all) return [];
     return all.filter((m) => m.status === 200);
   });
+
+  deactivedMonitors = computed(() => {
+    const all = this.dataMonitor.value();
+    if (!all) return [];
+    return all.filter((m) => m.status !== 200);
+  });
+
+  totalCount = computed(() => this.dataMonitor.value()?.length ?? 0);
 }
