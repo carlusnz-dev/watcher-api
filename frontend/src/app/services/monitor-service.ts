@@ -8,6 +8,7 @@ export interface Monitor {
   status: number;
   frequency: number;
   description: string;
+  url: string;
 }
 
 @Injectable({
